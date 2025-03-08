@@ -5,7 +5,7 @@ import fastifySensible from '@fastify/sensible';
 import Fastify from 'fastify';
 import process from 'node:process';
 import { healthcheck } from './handlers/healthcheck.js';
-import { listWallpapers, storeWallpaper } from './handlers/wallpaper.js';
+import { deleteWallpaper, listWallpapers, storeWallpaper } from './handlers/wallpaper.js';
 import { logger } from './logger.js';
 
 async function main() {
@@ -18,6 +18,7 @@ async function main() {
   server.get('/healthcheck', healthcheck);
   server.get('/v1/wallpapers', listWallpapers);
   server.post('/v1/wallpapers', storeWallpaper);
+  server.delete('/v1/wallpapers/:id', deleteWallpaper);
 
   server.listen({ port: 3000 }, (err) => {
     if (err) {
