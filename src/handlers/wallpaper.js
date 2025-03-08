@@ -66,13 +66,44 @@ export async function storeWallpaper(req, res) {
  */
 export async function listWallpapers(req, res) {
   const userId = 1;
-  const wallpapers = Array.from(await wallpaperRepository.allByUserId({ userId: userId })).map(
-    (w) => toCamelCase(w),
-  );
+  const wallpapers = await wallpaperRepository.all({ userId: userId });
 
   res.send({
     result: {
-      wallpapers: wallpapers,
+      wallpapers: wallpapers.map((w) => toCamelCase(w)),
     },
   });
+}
+
+/**
+ * @param {import("fastify").FastifyRequest} req
+ * @param {import("fastify").FastifyReply} res
+ */
+export async function deleteWallpaper(req, res) {
+  const userId = 1;
+  const wallpaperId = req.params.id;
+
+  try {
+    const wallpaper = await wallpaperRepository.findById(wallpaperId);
+
+    if (wallpaper && wallpaper.userId === userId) {
+      try {
+        await fs.promises.unlink(wallpaper.wallpaperFile);
+      } catch (err) {
+        logger.warn(err);
+      }
+
+      try {
+        await fs.promises.unlink(wallpaper.thumbnailFile);
+      } catch (err) {
+        logger.warn(err);
+      }
+
+      await wallpaperRepository.delete(wallpaperId);
+    }
+  } catch (err) {
+    logger.error(`Error during wallpaper deletion: ${err}`);
+  }
+
+  return res.status(204).send();
 }

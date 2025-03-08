@@ -24,8 +24,26 @@ async function save(data) {
  * @param {Obejct} filters
  * @param {string} filters.userId
  */
-async function allByUserId(filters) {
+async function all(filters) {
   return await db('wallpapers').select('*').where('user_id', '=', filters.userId);
 }
 
-export default { save, allByUserId };
+/**
+ * Finds a wallpaper by its ID.
+ * @param {string} id - The ID of the wallpaper.
+ * @returns {Promise<Object|null>} - The wallpaper object or null if not found.
+ */
+async function findById(id) {
+  return await db('wallpapers').select('*').where('id', '=', id).first();
+}
+
+/**
+ * Deletes a wallpaper by its ID.
+ * @param {string} id - The ID of the wallpaper to delete.
+ * @returns {Promise<void>}
+ */
+async function deleteById(id) {
+  await db('wallpapers').where('id', '=', id).delete();
+}
+
+export default { save, all, findById, deleteById };
