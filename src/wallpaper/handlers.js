@@ -1,4 +1,4 @@
-import { logger } from '../logger.js';
+import { logger } from '../internal/logger.js';
 import { WallpaperManager } from './manager.js';
 import wallpaperRepository from './repository.js';
 

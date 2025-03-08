@@ -3,7 +3,7 @@ import path from 'path';
 import sharp from 'sharp';
 import stream from 'stream/promises';
 import { fileURLToPath } from 'url';
-import { logger } from '../logger.js';
+import { logger } from '../internal/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
