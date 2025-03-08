@@ -15,7 +15,7 @@ const __dirname = path.dirname(__filename);
  * @param {import("fastify").FastifyReply} res
  */
 export async function storeWallpaper(req, res) {
-  const userId = 1;
+  const userId = '1';
   const maxUploadSize = 20_000_000; // allow uploads up to 20MB
 
   const data = await req.file({ limits: { fileSize: maxUploadSize } });
@@ -45,8 +45,8 @@ export async function storeWallpaper(req, res) {
   await wallpaperRepository.save({
     userId,
     name: data.filename,
-    wallpaperFile: wallpaperPath,
-    thumbnailFile: thumbnailPath,
+    wallpaperFile: `storage/wallpapers/${fileDetails.filename}`,
+    thumbnailFile: `storage/thumbnails/${fileDetails.thumbnail}`,
     height,
     width,
   });
@@ -65,7 +65,7 @@ export async function storeWallpaper(req, res) {
  * @param {import("fastify").FastifyReply} res
  */
 export async function listWallpapers(req, res) {
-  const userId = 1;
+  const userId = '1';
   const wallpapers = await wallpaperRepository.all({ userId: userId });
 
   res.send({
@@ -80,13 +80,13 @@ export async function listWallpapers(req, res) {
  * @param {import("fastify").FastifyReply} res
  */
 export async function deleteWallpaper(req, res) {
-  const userId = 1;
+  const userId = '1';
   const wallpaperId = req.params.id;
 
   try {
-    const wallpaper = await wallpaperRepository.findById(wallpaperId);
+    const wallpaper = await wallpaperRepository.find(wallpaperId);
 
-    if (wallpaper && wallpaper.userId === userId) {
+    if (wallpaper && wallpaper.user_id === parseInt(userId)) {
       try {
         await fs.promises.unlink(wallpaper.wallpaperFile);
       } catch (err) {
@@ -99,7 +99,7 @@ export async function deleteWallpaper(req, res) {
         logger.warn(err);
       }
 
-      await wallpaperRepository.delete(wallpaperId);
+      await wallpaperRepository.destroy(wallpaperId);
     }
   } catch (err) {
     logger.error(`Error during wallpaper deletion: ${err}`);

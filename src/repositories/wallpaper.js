@@ -1,5 +1,7 @@
 import { db } from '../database.js';
 
+const table = 'wallpapers';
+
 /**
  * @param {Object} data
  * @param {string} data.userId
@@ -8,9 +10,10 @@ import { db } from '../database.js';
  * @param {string} data.thumbnailFile
  * @param {number} data.height
  * @param {number} data.width
+ * @returns {Promise<Object[]>}
  */
 async function save(data) {
-  await db('wallpapers').insert({
+  await db(table).insert({
     user_id: data.userId,
     name: data.name,
     wallpaper_file: data.wallpaperFile,
@@ -25,7 +28,10 @@ async function save(data) {
  * @param {string} filters.userId
  */
 async function all(filters) {
-  return await db('wallpapers').select('*').where('user_id', '=', filters.userId);
+  return await db(table)
+    .select('*')
+    .where('user_id', '=', filters.userId)
+    .orderBy('created_at', 'desc');
 }
 
 /**
@@ -33,8 +39,8 @@ async function all(filters) {
  * @param {string} id - The ID of the wallpaper.
  * @returns {Promise<Object|null>} - The wallpaper object or null if not found.
  */
-async function findById(id) {
-  return await db('wallpapers').select('*').where('id', '=', id).first();
+async function find(id) {
+  return await db(table).select('*').where('id', '=', id).first();
 }
 
 /**
@@ -42,8 +48,8 @@ async function findById(id) {
  * @param {string} id - The ID of the wallpaper to delete.
  * @returns {Promise<void>}
  */
-async function deleteById(id) {
-  await db('wallpapers').where('id', '=', id).delete();
+async function destroy(id) {
+  await db(table).where('id', '=', id).delete();
 }
 
-export default { save, all, findById, deleteById };
+export default { save, all, find, destroy };
