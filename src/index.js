@@ -15,6 +15,10 @@ async function main() {
     .register(fastifySensible);
 
   server.get('/healthcheck', (_, res) => res.send({ alive: true }));
+
+  server.post('/login', () => {});
+  server.post('/logout', () => {});
+
   server.get('/v1/wallpapers', listWallpapers);
   server.post('/v1/wallpapers', storeWallpaper);
   server.delete('/v1/wallpapers/:id', deleteWallpaper);
