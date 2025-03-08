@@ -69,7 +69,7 @@ export async function deleteWallpaper(req, res) {
     const wallpaper = await wallpaperRepository.find(wallpaperId);
 
     if (wallpaper && wallpaper.user_id === parseInt(userId)) {
-      await wallpaperStorage.deleteWallpaper(wallpaper.wallpaperFile, wallpaper.thumbnailFile);
+      await wallpaperStorage.deleteWallpaper(wallpaper.wallpaper_file, wallpaper.thumbnail_file);
       await wallpaperRepository.destroy(wallpaperId);
     }
   } catch (err) {
