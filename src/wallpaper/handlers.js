@@ -1,9 +1,8 @@
-import sharp from 'sharp';
 import { logger } from '../logger.js';
+import { WallpaperManager } from './manager.js';
 import wallpaperRepository from './repository.js';
-import WallpaperStorage from './storage.js';
 
-const wallpaperStorage = new WallpaperStorage();
+const wallpaperManager = new WallpaperManager();
 
 /**
  * @param {import("fastify").FastifyRequest} req
@@ -16,21 +15,16 @@ export async function storeWallpaper(req, res) {
   const data = await req.file({ limits: { fileSize: maxUploadSize } });
   const uploadedFile = data.file;
 
-  const { filename, thumbnail } = await wallpaperStorage.saveWallpaper(uploadedFile, data.filename);
-
-  const storedWallpaperPath = wallpaperStorage.getPathForWallpaper(filename);
-
-  const metadata = await sharp(storedWallpaperPath).metadata();
-  const width = metadata.width;
-  const height = metadata.height;
+  const { filename, thumbnail } = await wallpaperManager.saveWallpaper(uploadedFile, data.filename);
+  const metadata = wallpaperManager.getWallpaperMetadata(filename);
 
   await wallpaperRepository.save({
     userId,
     name: data.filename,
     wallpaperFile: filename,
     thumbnailFile: thumbnail,
-    height,
-    width,
+    height: metadata.height,
+    width: metadata.width,
   });
 
   logger.info('Wallpaper stored', {
@@ -69,7 +63,7 @@ export async function deleteWallpaper(req, res) {
     const wallpaper = await wallpaperRepository.find(wallpaperId);
 
     if (wallpaper && wallpaper.user_id === parseInt(userId)) {
-      await wallpaperStorage.deleteWallpaper(wallpaper.wallpaper_file, wallpaper.thumbnail_file);
+      await wallpaperManager.deleteWallpaper(wallpaper.wallpaper_file, wallpaper.thumbnail_file);
       await wallpaperRepository.destroy(wallpaperId);
     }
   } catch (err) {

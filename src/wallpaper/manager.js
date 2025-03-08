@@ -8,7 +8,7 @@ import { logger } from '../logger.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export default class WallpaperStorage {
+export class WallpaperManager {
   constructor() {
     this.wallpaperDir = path.join(__dirname, '../../storage/wallpapers');
     this.thumbnailDir = path.join(__dirname, '../../storage/thumbnails');
@@ -63,6 +63,14 @@ export default class WallpaperStorage {
   }
 
   /**
+   * @param {string} filename
+   * @returns {Promise<sharp.Metadata>}
+   */
+  async getWallpaperMetadata(filename) {
+    return await sharp(this.#getPathForWallpaper(filename)).metadata();
+  }
+
+  /**
    * Generates unique filenames for a wallpaper and its thumbnail.
    * @param {string} originalFilename - The original filename.
    * @returns {{ filename: string, thumbnail: string }} - The generated filenames.
@@ -78,16 +86,7 @@ export default class WallpaperStorage {
    * @param {string} filename - The wallpaper filename.
    * @returns {string} - The full path to the wallpaper file.
    */
-  getPathForWallpaper(filename) {
+  #getPathForWallpaper(filename) {
     return path.join(this.wallpaperDir, filename);
-  }
-
-  /**
-   * Returns the full path for a thumbnail file.
-   * @param {string} thumbnail - The thumbnail filename.
-   * @returns {string} - The full path to the thumbnail file.
-   */
-  getPathForThumbnail(thumbnail) {
-    return path.join(this.thumbnailDir, thumbnail);
   }
 }
