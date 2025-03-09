@@ -1,8 +1,0 @@
-services:
-  stash:
-    image: stash:latest
-    build:
-      dockerfile: .docker/Dockerfile
-      context: .
-    ports:
-      - 3000:3000
