@@ -53,7 +53,7 @@ async function main() {
   server.post('/v1/wallpapers', { preHandler: authenticate }, storeWallpaper);
   server.delete('/v1/wallpapers/:id', { preHandler: authenticate }, deleteWallpaper);
 
-  server.listen({ port: 3000 }, (err) => {
+  server.listen({ host: '0.0.0.0', port: 3000 }, (err) => {
     if (err) {
       logger.error(err);
       process.exit(1);
