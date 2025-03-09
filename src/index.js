@@ -1,23 +1,30 @@
 import fastifyCors from '@fastify/cors';
 import fastifyHelmet from '@fastify/helmet';
 import fastifyMultipart from '@fastify/multipart';
+import fastifySecureSession from '@fastify/secure-session';
 import fastifySensible from '@fastify/sensible';
 import Fastify from 'fastify';
+import Buffer from 'node:buffer';
 import process from 'node:process';
 import { login, logout } from './auth/handlers.js';
 import { logger } from './logger.js';
-import {
-  deleteWallpaper,
-  listWallpapers,
-  storeWallpaper,
-} from './wallpaper/handlers.js';
+import { deleteWallpaper, listWallpapers, storeWallpaper } from './wallpaper/handlers.js';
 
 async function main() {
   const server = Fastify({ loggerInstance: logger })
     .register(fastifyMultipart)
     .register(fastifyHelmet)
     .register(fastifyCors)
-    .register(fastifySensible);
+    .register(fastifySensible)
+    .register(fastifySecureSession, {
+      key: Buffer.from('your-32-byte-secret-key-here', 'hex'),
+      cookieName: 'stash-session',
+      cookie: {
+        path: '/',
+        httpOnly: true,
+        sameSite: 'lax',
+      },
+    });
 
   server.get('/healthcheck', (_, res) => res.send({ alive: true }));
 
