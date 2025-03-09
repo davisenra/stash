@@ -36,7 +36,7 @@ async function main() {
       // TODO: receive 32 byte secret key from ENV
       key: Buffer.from('941eba2ac00b06c0cf10950a9c5e0e395297cea7548a2a4d2b708d91e452b90d', 'hex'),
       cookieName: 'stash-session',
-      expiry: 24 * 60 * 60, // sessions last for 1 day
+      expiry: 24 * 60 * 60, // 1 day
       cookie: {
         path: '/',
         httpOnly: true,
@@ -44,14 +44,12 @@ async function main() {
       },
     });
 
-  server.get('/healthcheck', (_, res) => res.send({ alive: true }));
-
-  server.post('/login', login);
-  server.post('/logout', { preHandler: authenticate }, logout);
-
-  server.get('/v1/wallpapers', { preHandler: authenticate }, listWallpapers);
-  server.post('/v1/wallpapers', { preHandler: authenticate }, storeWallpaper);
-  server.delete('/v1/wallpapers/:id', { preHandler: authenticate }, deleteWallpaper);
+  server.get('/api/healthcheck', (_, res) => res.send({ alive: true }));
+  server.post('/api/login', login);
+  server.post('/api/logout', { preHandler: authenticate }, logout);
+  server.get('/api/wallpapers', { preHandler: authenticate }, listWallpapers);
+  server.post('/api/wallpapers', { preHandler: authenticate }, storeWallpaper);
+  server.delete('/api/wallpapers/:id', { preHandler: authenticate }, deleteWallpaper);
 
   server.listen({ host: '0.0.0.0', port: 3000 }, (err) => {
     if (err) {
