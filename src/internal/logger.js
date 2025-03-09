@@ -16,6 +16,7 @@ const envToLogger = {
   },
 };
 
-// TODO: change settings dynamically based on ENV
+const envToLoad =
+  process.env.NODE_ENV === 'production' ? envToLogger.production : envToLogger.development;
 
-export const logger = pino({ ...envToLogger.development });
+export const logger = pino({ ...envToLoad });

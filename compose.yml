@@ -1,0 +1,6 @@
+services:
+  stash:
+    image: stash:latest
+    build:
+      dockerfile: .docker/Dockerfile
+      context: .
