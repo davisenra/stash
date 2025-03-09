@@ -1,8 +1,5 @@
 ARG NODE_VERSION=23.9
 
-ARG SOURCE_COMMIT
-ARG BUILD_DATE
-
 FROM node:${NODE_VERSION}-slim AS base
 
 WORKDIR /app
@@ -29,8 +26,6 @@ LABEL org.opencontainers.image.description="Self-hosted Wallpaper Storage"
 LABEL org.opencontainers.image.authors="Davi Senra <davi.senra98@gmail.com>"
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.source="https://github.com/davisenra/stash"
-LABEL org.opencontainers.image.revision="$SOURCE_COMMIT"
-LABEL org.opencontainers.image.created="$BUILD_DATE"
 
 ENV NODE_ENV=production
 COPY --from=api-builder /app/node_modules /app/node_modules
