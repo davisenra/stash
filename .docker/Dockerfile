@@ -22,7 +22,7 @@ COPY frontend ./
 RUN pnpm install --frozen-lockfile
 RUN pnpm run build
 
-FROM node:${NODE_VERSION}-alpine
+FROM base
 
 LABEL org.opencontainers.image.title="Stash"
 LABEL org.opencontainers.image.description="Self-hosted Wallpaper Storage"
