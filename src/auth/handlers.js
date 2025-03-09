@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
-import userRepository from '../repositories/userRepository.js';
+import { logger } from '../internal/logger.js';
+import userRepository from '../user/repository.js';
 
 /**
  * @param {import("fastify").FastifyRequest} req
@@ -7,20 +8,23 @@ import userRepository from '../repositories/userRepository.js';
  */
 async function login(req, res) {
   const { email, password } = req.body;
+
   const user = await userRepository.findByEmail(email);
   if (!user) {
     res.status(401).send({ result: { message: 'Invalid credentials' } });
     return;
   }
 
-  const passwordMatch = await bcrypt.compare(password, user.password_hash);
+  logger.info(await bcrypt.hash('Matrix11!', 10));
+
+  const passwordMatch = await bcrypt.compare(password, user.password);
   if (!passwordMatch) {
     res.status(401).send({ result: { message: 'Invalid credentials' } });
     return;
   }
 
+  logger.info(`Starting session for user ${user.id}`);
   req.session.set('user', { id: user.id });
-  await req.session.save();
 
   res.status(204);
 }
@@ -30,7 +34,10 @@ async function login(req, res) {
  * @param {import("fastify").FastifyReply} res
  */
 async function logout(req, res) {
-  req.session.delete();
+  const userId = req.session.user.id;
+
+  logger.info(`Ending session for user ${userId}`);
+  req.session.regenerate();
   res.status(204);
 }
 

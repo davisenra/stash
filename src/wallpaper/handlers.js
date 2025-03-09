@@ -9,8 +9,7 @@ const wallpaperManager = new WallpaperManager();
  * @param {import("fastify").FastifyReply} res
  */
 export async function storeWallpaper(req, res) {
-  // TODO: implement auth
-  const userId = '1';
+  const userId = req.session.get('user').id;
   // TODO: make this configurable
   const maxUploadSize = 20_000_000; // allow uploads up to 20MB
 
@@ -42,9 +41,8 @@ export async function storeWallpaper(req, res) {
  * @param {import("fastify").FastifyRequest} req
  * @param {import("fastify").FastifyReply} res
  */
-export async function listWallpapers(_, res) {
-  // TODO: implement auth
-  const userId = '1';
+export async function listWallpapers(req, res) {
+  const userId = req.session.get('user').id;
   const wallpapers = await wallpaperRepository.all({ userId: userId });
 
   res.send({
@@ -59,8 +57,7 @@ export async function listWallpapers(_, res) {
  * @param {import("fastify").FastifyReply} res
  */
 export async function deleteWallpaper(req, res) {
-  // TODO: implement auth
-  const userId = '1';
+  const userId = req.session.get('user').id;
   const wallpaperId = req.params.id;
 
   try {

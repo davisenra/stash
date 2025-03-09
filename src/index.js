@@ -4,10 +4,11 @@ import fastifyMultipart from '@fastify/multipart';
 import fastifySecureSession from '@fastify/secure-session';
 import fastifySensible from '@fastify/sensible';
 import Fastify from 'fastify';
-import Buffer from 'node:buffer';
+import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { login, logout } from './auth/handlers.js';
-import { logger } from './logger.js';
+import { logger } from './internal/logger.js';
+import { authenticate } from './internal/middleware.js';
 import { deleteWallpaper, listWallpapers, storeWallpaper } from './wallpaper/handlers.js';
 
 async function main() {
@@ -17,8 +18,10 @@ async function main() {
     .register(fastifyCors)
     .register(fastifySensible)
     .register(fastifySecureSession, {
-      key: Buffer.from('your-32-byte-secret-key-here', 'hex'),
+      // TODO: receive 32 byte secret key from ENV
+      key: Buffer.from('941eba2ac00b06c0cf10950a9c5e0e395297cea7548a2a4d2b708d91e452b90d', 'hex'),
       cookieName: 'stash-session',
+      expiry: 24 * 60 * 60, // sessions last for 1 day
       cookie: {
         path: '/',
         httpOnly: true,
@@ -29,11 +32,11 @@ async function main() {
   server.get('/healthcheck', (_, res) => res.send({ alive: true }));
 
   server.post('/login', login);
-  server.post('/logout', logout);
+  server.post('/logout', { preHandler: authenticate }, logout);
 
-  server.get('/v1/wallpapers', listWallpapers);
-  server.post('/v1/wallpapers', storeWallpaper);
-  server.delete('/v1/wallpapers/:id', deleteWallpaper);
+  server.get('/v1/wallpapers', { preHandler: authenticate }, listWallpapers);
+  server.post('/v1/wallpapers', { preHandler: authenticate }, storeWallpaper);
+  server.delete('/v1/wallpapers/:id', { preHandler: authenticate }, deleteWallpaper);
 
   server.listen({ port: 3000 }, (err) => {
     if (err) {

@@ -1,4 +1,4 @@
-import { db } from '../database.js';
+import { db } from '../internal/database.js';
 
 /**
  * Finds a user by their email.
