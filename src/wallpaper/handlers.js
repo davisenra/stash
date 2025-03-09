@@ -17,7 +17,10 @@ export async function storeWallpaper(req, res) {
   const data = await req.file({ limits: { fileSize: maxUploadSize } });
   const uploadedFile = data.file;
 
-  const { filename, thumbnail } = await wallpaperManager.saveWallpaper(uploadedFile, data.filename);
+  const { filename, thumbnail } = await wallpaperManager.saveWallpaper(
+    uploadedFile,
+    data.filename,
+  );
   const metadata = wallpaperManager.getWallpaperMetadata(filename);
 
   await wallpaperRepository.save({
@@ -67,7 +70,10 @@ export async function deleteWallpaper(req, res) {
     const wallpaper = await wallpaperRepository.find(wallpaperId);
 
     if (wallpaper && wallpaper.user_id === parseInt(userId)) {
-      await wallpaperManager.deleteWallpaper(wallpaper.wallpaper_file, wallpaper.thumbnail_file);
+      await wallpaperManager.deleteWallpaper(
+        wallpaper.wallpaper_file,
+        wallpaper.thumbnail_file,
+      );
       await wallpaperRepository.destroy(wallpaperId);
     }
   } catch (err) {

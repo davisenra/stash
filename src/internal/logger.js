@@ -1,18 +1,18 @@
-import pino from "pino";
+import pino from 'pino';
 
 const envToLogger = {
   development: {
     transport: {
-      target: "pino-pretty",
+      target: 'pino-pretty',
       options: {
-        translateTime: "HH:MM:ss Z",
-        ignore: "pid,hostname",
+        translateTime: 'HH:MM:ss Z',
+        ignore: 'pid,hostname',
       },
     },
-    level: "debug",
+    level: 'debug',
   },
   production: {
-    level: "info",
+    level: 'info',
   },
 };
 

@@ -4,8 +4,13 @@ import fastifyMultipart from '@fastify/multipart';
 import fastifySensible from '@fastify/sensible';
 import Fastify from 'fastify';
 import process from 'node:process';
+import { login, logout } from './auth/handlers.js';
 import { logger } from './logger.js';
-import { deleteWallpaper, listWallpapers, storeWallpaper } from './wallpaper/handlers.js';
+import {
+  deleteWallpaper,
+  listWallpapers,
+  storeWallpaper,
+} from './wallpaper/handlers.js';
 
 async function main() {
   const server = Fastify({ loggerInstance: logger })
@@ -16,8 +21,8 @@ async function main() {
 
   server.get('/healthcheck', (_, res) => res.send({ alive: true }));
 
-  server.post('/login', () => {});
-  server.post('/logout', () => {});
+  server.post('/login', login);
+  server.post('/logout', logout);
 
   server.get('/v1/wallpapers', listWallpapers);
   server.post('/v1/wallpapers', storeWallpaper);
