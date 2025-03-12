@@ -41,4 +41,12 @@ async function logout(req, res) {
   res.status(204);
 }
 
-export { login, logout };
+/**
+ * @param {import("fastify").FastifyRequest} _
+ * @param {import("fastify").FastifyReply} res
+ */
+async function check(_, res) {
+  res.status(204);
+}
+
+export { check, login, logout };

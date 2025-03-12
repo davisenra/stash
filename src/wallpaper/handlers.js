@@ -17,7 +17,7 @@ export async function storeWallpaper(req, res) {
   const uploadedFile = data.file;
 
   const { filename, thumbnail } = await wallpaperManager.saveWallpaper(uploadedFile, data.filename);
-  const metadata = wallpaperManager.getWallpaperMetadata(filename);
+  const metadata = await wallpaperManager.getWallpaperMetadata(filename);
 
   await wallpaperRepository.save({
     userId,
