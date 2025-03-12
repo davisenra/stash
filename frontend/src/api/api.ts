@@ -25,4 +25,7 @@ export const apiService = {
       body: JSON.stringify(payload),
     });
   },
+  // intetionally leaving headers blank, otherswise Fastify will throw a 400
+  logout: async () => request('/logout', { method: 'POST', headers: {} }),
+  check: async () => request('/check'),
 };

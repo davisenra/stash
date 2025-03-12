@@ -8,24 +8,30 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: () => import('@/views/HomeView.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/login',
       name: 'login',
       component: () => import('@/views/LoginView.vue'),
+      meta: { guest: true },
     },
   ],
 });
 
-router.beforeEach((to, from, next) => {
-  const auth = useAuth();
+router.beforeEach(async (to, _, next) => {
+  const { state, checkAuth } = useAuth();
 
-  if (to.name !== 'login' && !auth.state.isAuthenticated) {
-    next({ name: 'login' });
-  } else if (to.name === 'login' && auth.state.isAuthenticated) {
-    next({ name: 'home' });
+  if (!state.isInitialized) {
+    await checkAuth();
+  }
+
+  if (to.meta.requiresAuth && !state.isAuthenticated) {
+    return next({ name: 'login' });
+  } else if (to.meta.guest && state.isAuthenticated) {
+    return next({ name: 'home' });
   } else {
-    next();
+    return next();
   }
 });
 

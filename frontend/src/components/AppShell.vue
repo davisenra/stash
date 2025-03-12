@@ -1,26 +1,39 @@
 <script setup lang="ts">
+import Logo from '@/assets/Logo.vue';
 import { ref } from 'vue';
 
 defineProps<{
   showNavbar: boolean;
 }>();
 
+const isMobileMenuOpen = ref(false);
+
+const emit = defineEmits(['logout']);
+
 const navigationItems = [
   { name: 'Home', href: '/' },
-  { name: 'Logout', href: '/logout' },
+  {
+    name: 'Logout',
+    href: '',
+    onClick: () => {
+      if (isMobileMenuOpen.value) {
+        isMobileMenuOpen.value = false;
+      }
+      emit('logout');
+    },
+  },
 ];
-
-const isMobileMenuOpen = ref(false);
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col bg-neutral-100">
-    <nav v-if="showNavbar" class="bg-white shadow">
+  <div class="flex min-h-screen flex-col bg-neutral-900">
+    <nav v-if="showNavbar" class="border-b border-neutral-600 bg-neutral-800 shadow">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 justify-between">
           <div class="flex items-center">
-            <div class="flex flex-shrink-0 items-center">
-              <span class="text-lg font-semibold">Stash</span>
+            <div class="flex flex-shrink-0 items-center text-emerald-500">
+              <Logo class="w-8" />
+              <span class="ml-1 text-lg font-semibold">Stash</span>
             </div>
           </div>
 
@@ -28,10 +41,13 @@ const isMobileMenuOpen = ref(false);
             <div class="flex space-x-4">
               <router-link
                 v-for="item in navigationItems"
+                @click="item.onClick"
                 :key="item.name"
                 :to="item.href"
                 :class="[
-                  $route.path === item.href ? 'text-blue-600' : 'text-gray-500 hover:text-gray-900',
+                  $route.path === item.href
+                    ? 'text-emerald-600'
+                    : 'text-neutral-500 hover:text-neutral-400',
                   'rounded-md px-3 py-2 text-sm font-bold',
                 ]"
               >
@@ -43,7 +59,7 @@ const isMobileMenuOpen = ref(false);
           <div class="flex items-center sm:hidden">
             <button
               @click="isMobileMenuOpen = !isMobileMenuOpen"
-              class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none"
+              class="inline-flex items-center justify-center rounded-md p-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-400 focus:outline-none"
             >
               <span class="sr-only">Open main menu</span>
               <svg
@@ -89,11 +105,11 @@ const isMobileMenuOpen = ref(false);
             :to="item.href"
             :class="[
               $route.path === item.href
-                ? 'bg-blue-50 text-blue-600'
-                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900',
+                ? 'bg-neutral-800 text-emerald-500'
+                : 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900',
               'block rounded-md px-3 py-2 text-base font-medium',
             ]"
-            @click="isMobileMenuOpen = false"
+            @click="item.onClick"
           >
             {{ item.name }}
           </router-link>
@@ -102,7 +118,7 @@ const isMobileMenuOpen = ref(false);
     </nav>
 
     <main class="flex flex-1">
-      <div class="mx-auto flex max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+      <div class="mx-auto flex max-w-7xl flex-1 px-4 py-6 text-neutral-300 sm:px-6 lg:px-8">
         <slot></slot>
       </div>
     </main>

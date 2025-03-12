@@ -22,7 +22,7 @@ const emit = defineEmits(['blur', 'focus']);
   <div class="flex flex-col py-1">
     <label class="text-sm text-neutral-400" v-if="label" :for="id">{{ label }}</label>
     <input
-      class="max-w-sm rounded border border-neutral-300 py-1"
+      class="max-w-sm rounded border border-neutral-600 bg-neutral-800 px-2 py-1.5 text-neutral-400"
       :class="{ 'border-red-400': error }"
       v-model="model"
       :id="id"
