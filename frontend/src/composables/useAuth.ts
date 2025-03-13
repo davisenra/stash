@@ -16,16 +16,17 @@ export function useAuth() {
   async function login(payload: { email: string; password: string }) {
     state.isLoading = true;
     state.error = null;
-    try {
-      await apiService.login(payload);
-      state.isAuthenticated = true;
-    } catch (error: any) {
-      state.error = error.message || 'Login failed.';
+    const { err } = await apiService.login(payload);
+    state.isLoading = false;
+
+    if (err) {
+      state.error = err.statusCode === 401 ? 'Invalid credentials' : 'Something went wrong...';
       state.isAuthenticated = false;
       state.user = null;
-    } finally {
-      state.isLoading = false;
+      return;
     }
+
+    state.isAuthenticated = true;
   }
 
   async function logout() {
@@ -38,24 +39,26 @@ export function useAuth() {
       return authCheckPromise;
     }
 
-    authCheckPromise = new Promise(async (resolve) => {
+    authCheckPromise = (async () => {
       state.isLoading = true;
-      try {
-        await apiService.check();
-        state.isAuthenticated = true;
-      } catch (error) {
+
+      const { err } = await apiService.check();
+
+      if (err) {
         state.isAuthenticated = false;
         state.user = null;
-      } finally {
-        state.isLoading = false;
-        state.isInitialized = true;
-        // Reset promise reference after completion
-        authCheckPromise = null;
-        resolve();
+      } else {
+        state.isAuthenticated = true;
       }
-    });
 
-    return authCheckPromise;
+      state.isLoading = false;
+      state.isInitialized = true;
+    })();
+
+    await authCheckPromise;
+    authCheckPromise = null;
+
+    return;
   }
 
   function initAuth() {

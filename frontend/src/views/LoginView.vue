@@ -27,24 +27,33 @@ async function attemptLogin() {
 
 <template>
   <div class="flex w-max flex-1 flex-col justify-center">
-    <div class="max-w-lg rounded-lg bg-neutral-800 p-6 shadow">
-      <div class="mb-3 flex space-x-2 text-emerald-500">
+    <div class="max-w-lg space-y-2 rounded-lg bg-neutral-800 p-6 shadow">
+      <div class="mb-4 flex space-x-2 text-emerald-500">
         <Logo />
         <p class="text-2xl font-bold">Stash</p>
       </div>
-      <SInput v-model="loginPayload.email" id="email" label="Email" />
-      <SInput v-model="loginPayload.password" id="password" type="password" label="Password" />
-      <button
-        @click="attemptLogin"
-        :class="{
-          'mt-3 rounded px-3 py-1 font-bold text-white': true,
-          'cursor-pointer bg-emerald-400 hover:bg-emerald-500': payloadIsValid,
-          'bg-neutral-600': !payloadIsValid,
-        }"
-        :disabled="!payloadIsValid"
-      >
-        Login
-      </button>
+      <div>
+        <SInput v-model="loginPayload.email" id="email" label="Email" placeholder="Email" />
+        <SInput
+          v-model="loginPayload.password"
+          id="password"
+          type="password"
+          label="Password"
+          placeholder="Password"
+        />
+        <p class="text-red-400" v-if="state.error">{{ state.error }}</p>
+        <button
+          @click="attemptLogin"
+          :class="{
+            'mt-3 rounded px-3 py-1 font-bold text-white': true,
+            'cursor-pointer bg-emerald-400 hover:bg-emerald-500': payloadIsValid,
+            'bg-neutral-600': !payloadIsValid,
+          }"
+          :disabled="!payloadIsValid"
+        >
+          Login
+        </button>
+      </div>
     </div>
   </div>
 </template>
