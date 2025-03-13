@@ -36,11 +36,12 @@ async function main() {
       // TODO: receive 32 byte secret key from ENV
       key: Buffer.from('941eba2ac00b06c0cf10950a9c5e0e395297cea7548a2a4d2b708d91e452b90d', 'hex'),
       cookieName: 'stash-session',
+      expiry: 7200,
       cookie: {
         path: '/',
         httpOnly: true,
         sameSite: 'lax',
-        maxAge: 120,
+        maxAge: 7200, // 2 hours
       },
     });
 

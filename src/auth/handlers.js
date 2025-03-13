@@ -24,6 +24,7 @@ async function login(req, res) {
   }
 
   logger.info(`Starting session for user ${user.id}`);
+  req.session.regenerate();
   req.session.set('user', { id: user.id });
 
   res.status(204);
