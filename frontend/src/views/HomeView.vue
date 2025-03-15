@@ -1,17 +1,26 @@
 <script setup lang="ts">
-import { apiService } from '@/api/api';
-import type { Wallpaper } from '@/types';
-import { onMounted, ref } from 'vue';
+import WallpaperGallery from '@/components/Wallpapers/WallpaperGallery.vue';
+import UploadButton from '@/components/Upload/UploadButton.vue';
+import UploadModal from '@/components/Upload/UploadModal.vue';
+import { ref } from 'vue';
 
-const wallpapers = ref<Wallpaper[]>();
+const isModalOpen = ref(false);
+const isUploadModalOpen = ref(false);
 
-onMounted(async () => {
-  wallpapers.value = await apiService.listWallpapers();
-});
+const openUploadModal = () => {
+  isUploadModalOpen.value = true;
+  document.body.style.overflow = 'hidden';
+};
+
+const closeUploadModal = () => {
+  isUploadModalOpen.value = false;
+  document.body.style.overflow = '';
+};
 </script>
 
 <template>
-  <div>
-    <img :src="`/storage/thumbnails/${w.thumbnailFile}`" v-for="w in wallpapers" :key="w.id" />
-  </div>
+  <WallpaperGallery />
+
+  <UploadButton @click="openUploadModal" />
+  <UploadModal v-if="isUploadModalOpen" @close="closeUploadModal" />
 </template>

@@ -1,5 +1,6 @@
 import { reactive, onMounted } from 'vue';
 import { apiService } from '@/api/api';
+import { useToast } from '@/composables/useToast';
 
 const state = reactive({
   isAuthenticated: false,
@@ -23,6 +24,10 @@ export function useAuth() {
       state.error = err.statusCode === 401 ? 'Invalid credentials' : 'Something went wrong...';
       state.isAuthenticated = false;
       state.user = null;
+
+      const { error } = useToast();
+      error(state.error);
+
       return;
     }
 

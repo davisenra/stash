@@ -5,7 +5,7 @@ import { computed, ref } from 'vue';
 import { useAuth } from '@/composables/useAuth.ts';
 import { useRouter } from 'vue-router';
 
-const { login, state } = useAuth();
+const { login } = useAuth();
 const { push } = useRouter();
 
 const loginPayload = ref({
@@ -41,7 +41,6 @@ async function attemptLogin() {
           label="Password"
           placeholder="Password"
         />
-        <p class="text-red-400" v-if="state.error">{{ state.error }}</p>
         <button
           @click="attemptLogin"
           :class="{

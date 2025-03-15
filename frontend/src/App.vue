@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { RouterView, useRouter } from 'vue-router';
-import AppShell from '@/components/AppShell.vue';
+import SAppShell from '@/components/SAppShell.vue';
+import ToastContainer from '@/components/Toasts/ToastContainer.vue';
 import { computed } from 'vue';
-import { useAuth } from './composables/useAuth';
+import { useAuth } from '@/composables/useAuth';
+import { useToast } from '@/composables/useToast';
 
 const { state, initAuth, logout } = useAuth();
+const { toasts } = useToast();
 const router = useRouter();
 const showNavbar = computed(() => state.isAuthenticated);
 
@@ -17,7 +20,8 @@ async function handleLogout() {
 </script>
 
 <template>
-  <AppShell :show-navbar="showNavbar" @logout="handleLogout">
+  <SAppShell :show-navbar="showNavbar" @logout="handleLogout">
     <RouterView />
-  </AppShell>
+  </SAppShell>
+  <ToastContainer :toasts="toasts" />
 </template>
