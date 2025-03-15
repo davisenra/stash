@@ -23,15 +23,6 @@ async function main() {
     .register(fastifyHelmet)
     .register(fastifyCors)
     .register(fastifySensible)
-    .register(fastifyStatic, {
-      root: path.join(__dirname, '..', 'dist'),
-      prefix: '/',
-    })
-    .register(fastifyStatic, {
-      root: path.join(__dirname, '..', 'storage'),
-      prefix: '/storage',
-      decorateReply: false,
-    })
     .register(fastifySecureSession, {
       // TODO: receive 32 byte secret key from ENV
       key: Buffer.from('941eba2ac00b06c0cf10950a9c5e0e395297cea7548a2a4d2b708d91e452b90d', 'hex'),
@@ -43,6 +34,24 @@ async function main() {
         sameSite: 'lax',
         maxAge: 7200, // 2 hours
       },
+    })
+    .register(fastifyStatic, {
+      root: path.join(__dirname, '..', 'dist'),
+      prefix: '/',
+    })
+    .register((app, _, done) => {
+      app.addHook('onRequest', async (req, res) => {
+        if (!req.session.get('user')) {
+          res.status(403).send();
+          return;
+        }
+      });
+      app.register(fastifyStatic, {
+        root: path.join(__dirname, '..', 'storage'),
+        prefix: '/storage',
+        // decorateReply: false,
+      });
+      done();
     });
 
   server.register(
@@ -60,7 +69,7 @@ async function main() {
     { prefix: '/api' },
   );
 
-  server.listen({ host: '0.0.0.0', port: 3000 }, (err) => {
+  server.listen({ host: 'localhost', port: 3000 }, (err) => {
     if (err) {
       logger.error(err);
       process.exit(1);

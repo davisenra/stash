@@ -11,7 +11,7 @@ async function login(req, res) {
 
   const user = await userRepository.findByEmail(email);
   if (!user) {
-    res.status(401).send({ result: { message: 'Invalid credentials' } });
+    res.status(401).send({ error: { message: 'Invalid credentials' } });
     return;
   }
 
@@ -19,7 +19,7 @@ async function login(req, res) {
 
   const passwordMatch = await bcrypt.compare(password, user.password);
   if (!passwordMatch) {
-    res.status(401).send({ result: { message: 'Invalid credentials' } });
+    res.status(401).send({ error: { message: 'Invalid credentials' } });
     return;
   }
 
@@ -27,7 +27,7 @@ async function login(req, res) {
   req.session.regenerate();
   req.session.set('user', { id: user.id });
 
-  res.status(204);
+  res.status(204).send();
 }
 
 /**
@@ -39,7 +39,7 @@ async function logout(req, res) {
 
   logger.info(`Ending session for user ${userId}`);
   req.session.regenerate();
-  res.status(204);
+  res.status(204).send();
 }
 
 /**
@@ -47,7 +47,7 @@ async function logout(req, res) {
  * @param {import("fastify").FastifyReply} res
  */
 async function check(_, res) {
-  res.status(204);
+  res.status(204).send();
 }
 
 export { check, login, logout };
