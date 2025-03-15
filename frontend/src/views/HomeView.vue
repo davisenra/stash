@@ -2,25 +2,30 @@
 import WallpaperGallery from '@/components/Wallpapers/WallpaperGallery.vue';
 import UploadButton from '@/components/Upload/UploadButton.vue';
 import UploadModal from '@/components/Upload/UploadModal.vue';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useWallpapers } from '@/composables/useWallpapers';
 
-const isModalOpen = ref(false);
+const { wallpapers, fetchWallpapers } = useWallpapers();
 const isUploadModalOpen = ref(false);
 
-const openUploadModal = () => {
+function openUploadModal() {
   isUploadModalOpen.value = true;
   document.body.style.overflow = 'hidden';
-};
+}
 
-const closeUploadModal = () => {
+function closeUploadModal() {
   isUploadModalOpen.value = false;
   document.body.style.overflow = '';
-};
+}
+
+onMounted(async () => {
+  await fetchWallpapers();
+});
 </script>
 
 <template>
-  <WallpaperGallery />
+  <WallpaperGallery :wallpapers="wallpapers" />
 
   <UploadButton @click="openUploadModal" />
-  <UploadModal v-if="isUploadModalOpen" @close="closeUploadModal" />
+  <UploadModal v-if="isUploadModalOpen" @uploaded="fetchWallpapers" @close="closeUploadModal" />
 </template>

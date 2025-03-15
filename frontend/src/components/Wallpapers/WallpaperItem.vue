@@ -9,9 +9,9 @@ const emit = defineEmits<{
   (e: 'select', wallpaper: Wallpaper): void;
 }>();
 
-const handleClick = () => {
+function handleClick() {
   emit('select', props.wallpaper);
-};
+}
 </script>
 
 <template>

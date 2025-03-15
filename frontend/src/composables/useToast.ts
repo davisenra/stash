@@ -16,7 +16,7 @@ const generateId = (): string => {
 const toasts = ref<Toast[]>([]);
 
 export function useToast() {
-  const show = (message: string, type: ToastType = 'info', duration: number = 3000): string => {
+  function show(message: string, type: ToastType = 'info', duration: number = 3000): string {
     const id = generateId();
     const toast: Toast = {
       id,
@@ -27,29 +27,28 @@ export function useToast() {
 
     toasts.value.push(toast);
     return id;
-  };
+  }
 
-  const remove = (id: string): void => {
+  function remove(id: string): void {
     toasts.value = toasts.value.filter((toast) => toast.id !== id);
-  };
+  }
 
-  const success = (message: string, duration?: number): string => {
+  function success(message: string, duration?: number): string {
     return show(message, 'success', duration);
-  };
+  }
 
-  const error = (message: string, duration?: number): string => {
+  function error(message: string, duration?: number): string {
     return show(message, 'error', duration);
-  };
+  }
 
-  const warning = (message: string, duration?: number): string => {
+  function warning(message: string, duration?: number): string {
     return show(message, 'warning', duration);
-  };
+  }
 
-  const info = (message: string, duration?: number): string => {
+  function info(message: string, duration?: number): string {
     return show(message, 'info', duration);
-  };
+  }
 
-  // Clear all toasts
   const clear = (): void => {
     toasts.value = [];
   };

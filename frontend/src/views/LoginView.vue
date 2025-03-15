@@ -33,25 +33,26 @@ async function attemptLogin() {
         <p class="text-2xl font-bold">Stash</p>
       </div>
       <div>
-        <SInput v-model="loginPayload.email" id="email" label="Email" placeholder="Email" />
-        <SInput
-          v-model="loginPayload.password"
-          id="password"
-          type="password"
-          label="Password"
-          placeholder="Password"
-        />
-        <button
-          @click="attemptLogin"
-          :class="{
-            'mt-3 rounded px-3 py-1 font-bold text-white': true,
-            'cursor-pointer bg-emerald-400 hover:bg-emerald-500': payloadIsValid,
-            'bg-neutral-600': !payloadIsValid,
-          }"
-          :disabled="!payloadIsValid"
-        >
-          Login
-        </button>
+        <form @submit.prevent="attemptLogin">
+          <SInput v-model="loginPayload.email" id="email" label="Email" placeholder="Email" />
+          <SInput
+            v-model="loginPayload.password"
+            id="password"
+            type="password"
+            label="Password"
+            placeholder="Password"
+          />
+          <button
+            :class="{
+              'mt-3 rounded px-3 py-1 font-bold text-white': true,
+              'cursor-pointer bg-emerald-400 hover:bg-emerald-500': payloadIsValid,
+              'bg-neutral-600': !payloadIsValid,
+            }"
+            :disabled="!payloadIsValid"
+          >
+            Login
+          </button>
+        </form>
       </div>
     </div>
   </div>

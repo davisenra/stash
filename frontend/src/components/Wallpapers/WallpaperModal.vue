@@ -11,21 +11,21 @@ const emit = defineEmits<{
   (e: 'close'): void;
 }>();
 
-const handleClose = () => {
+function handleClose() {
   emit('close');
-};
+}
 
-const handleModalClick = (event: MouseEvent) => {
+function handleModalClick(event: MouseEvent) {
   if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
     handleClose();
   }
-};
+}
 
-const handleKeyDown = (event: KeyboardEvent) => {
+function handleKeyDown(event: KeyboardEvent) {
   if (event.key === 'Escape' && props.isOpen) {
     handleClose();
   }
-};
+}
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeyDown);

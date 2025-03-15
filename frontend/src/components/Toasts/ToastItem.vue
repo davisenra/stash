@@ -16,27 +16,27 @@ const emit = defineEmits<{
 const isVisible = ref(false);
 let timeout: number | null = null;
 
-const removeToast = () => {
+function removeToast() {
   isVisible.value = false;
   setTimeout(() => {
     emit('remove', props.id);
   }, 300);
-};
+}
 
-const startTimer = () => {
+function startTimer() {
   if (props.duration !== 0) {
     timeout = window.setTimeout(() => {
       removeToast();
     }, props.duration || 3000);
   }
-};
+}
 
-const clearTimer = () => {
+function clearTimer() {
   if (timeout) {
     clearTimeout(timeout);
     timeout = null;
   }
-};
+}
 
 onMounted(() => {
   setTimeout(() => {

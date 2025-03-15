@@ -1,97 +1,125 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import SFilePreview from '@/components/SFilePreview.vue';
+import { apiService } from '@/api/api';
+import { useToast } from '@/composables/useToast';
 
 const emit = defineEmits<{
   (e: 'close'): void;
+  (uploaded: 'uploaded'): void;
 }>();
 
+const toast = useToast();
 const selectedFiles = ref<File[]>([]);
 const isDragging = ref(false);
+const isUploading = ref(false);
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
-const closeModal = () => {
+function closeModal() {
   emit('close');
-};
+}
 
-const handleModalClick = (event: MouseEvent) => {
+function handleModalClick(event: MouseEvent) {
   if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
     closeModal();
   }
-};
+}
 
-const handleKeyDown = (event: KeyboardEvent) => {
+function handleKeyDown(event: KeyboardEvent) {
   if (event.key === 'Escape') {
     closeModal();
   }
-};
+}
 
-const openFilePicker = () => {
+function openFilePicker() {
   fileInputRef.value?.click();
-};
+}
 
-const handleFileSelect = (event: Event) => {
+function handleFileSelect(event: Event) {
   const input = event.target as HTMLInputElement;
   if (input.files) {
     addFiles(Array.from(input.files));
     input.value = '';
   }
-};
+}
 
-const addFiles = (files: File[]) => {
+function addFiles(files: File[]) {
   const imageFiles = files.filter((file) => file.type.startsWith('image/'));
   selectedFiles.value = [...selectedFiles.value, ...imageFiles];
-};
+}
 
-const removeFile = (index: number) => {
+function removeFile(index: number) {
   selectedFiles.value = selectedFiles.value.filter((_, i) => i !== index);
-};
+}
 
-const handleDragEnter = (event: DragEvent) => {
+function handleDragEnter(event: DragEvent) {
   event.preventDefault();
   isDragging.value = true;
-};
+}
 
-const handleDragOver = (event: DragEvent) => {
+function handleDragOver(event: DragEvent) {
   event.preventDefault();
   isDragging.value = true;
-};
+}
 
-const handleDragLeave = () => {
+function handleDragLeave() {
   isDragging.value = false;
-};
+}
 
-const handleDrop = (event: DragEvent) => {
+function handleDrop(event: DragEvent) {
   event.preventDefault();
   isDragging.value = false;
 
   if (event.dataTransfer?.files) {
     addFiles(Array.from(event.dataTransfer.files));
   }
-};
+}
 
-const uploadFiles = () => {
-  // Here you would implement the logic to upload each file individually
-  // For example:
-  /*
-  selectedFiles.value.forEach(async (file) => {
-    try {
-      const formData = new FormData();
-      formData.append('wallpaper', file);
+async function uploadFiles() {
+  if (selectedFiles.value.length === 0) return;
 
-      // Send the request to your API
-      await apiService.uploadWallpaper(formData);
+  isUploading.value = true;
+  toast.info(`Uploading ${selectedFiles.value.length} wallpapers...`);
 
-      // Handle success
-    } catch (error) {
-      // Handle error
-    }
-  });
-  */
+  const results = await Promise.allSettled(
+    selectedFiles.value.map(async (file) => {
+      const { err } = await apiService.uploadWallpaper(file);
+      if (err) {
+        return { file, success: false, error: err };
+      }
+      return { file, success: true };
+    }),
+  );
 
-  console.log('Files to upload:', selectedFiles.value);
+  const successful = results.filter(
+    (result) => result.status === 'fulfilled' && result.value.success,
+  ).length;
+
+  const failures = results.filter(
+    (result) =>
+      result.status === 'rejected' || (result.status === 'fulfilled' && !result.value.success),
+  );
+
+  if (successful > 0) {
+    toast.success(`Successfully uploaded ${successful} wallpaper${successful !== 1 ? 's' : ''}`);
+  }
+
+  if (failures.length > 0) {
+    toast.error(`Failed to upload ${failures.length} wallpaper${failures.length !== 1 ? 's' : ''}`);
+
+    failures.forEach((failure) => {
+      if (failure.status === 'rejected') {
+        console.error('Upload rejected:', failure.reason);
+      } else if (failure.status === 'fulfilled' && !failure.value.success) {
+        console.error('Upload failed:', failure.value.error);
+      }
+    });
+  }
+
+  isUploading.value = false;
+  emit('uploaded');
   closeModal();
-};
+}
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeyDown);

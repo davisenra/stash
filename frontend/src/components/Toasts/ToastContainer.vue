@@ -11,9 +11,9 @@ const emit = defineEmits<{
   (e: 'remove', id: string): void;
 }>();
 
-const removeToast = (id: string) => {
+function removeToast(id: string) {
   emit('remove', id);
-};
+}
 
 const reversedToasts = computed(() => [...props.toasts].reverse());
 </script>

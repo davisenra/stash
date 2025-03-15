@@ -1,6 +1,6 @@
 import type { Wallpaper, WallpaperResponse } from '@/types';
 import { snakeToCamel } from '@/utils/utils';
-import { ofetch, FetchError, type FetchRequest } from 'ofetch';
+import { ofetch, FetchError } from 'ofetch';
 
 const BASE_URL = '/api';
 const apiFetch = ofetch.create({ baseURL: BASE_URL });
@@ -39,5 +39,15 @@ export const apiService = {
     const { data, err } = await request<WallpaperResponse>('/wallpapers');
     if (err) throw err;
     return snakeToCamel(data.result.wallpapers);
+  },
+  uploadWallpaper: async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return await request('/wallpapers', {
+      method: 'POST',
+      headers: {},
+      body: formData,
+    });
   },
 };
