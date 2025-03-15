@@ -49,7 +49,6 @@ async function main() {
       app.register(fastifyStatic, {
         root: path.join(__dirname, '..', 'storage'),
         prefix: '/storage',
-        // decorateReply: false,
       });
       done();
     });
