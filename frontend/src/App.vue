@@ -5,6 +5,7 @@ import ToastContainer from '@/components/Toasts/ToastContainer.vue';
 import { computed } from 'vue';
 import { useAuth } from '@/composables/useAuth';
 import { useToast } from '@/composables/useToast';
+import SConfirmationDialog from './components/SConfirmationDialog.vue';
 
 const { state, initAuth, logout } = useAuth();
 const { toasts } = useToast();
@@ -24,4 +25,5 @@ async function handleLogout() {
     <RouterView />
   </SAppShell>
   <ToastContainer :toasts="toasts" />
+  <SConfirmationDialog />
 </template>

@@ -50,4 +50,10 @@ export const apiService = {
       body: formData,
     });
   },
+  removeWallpaper: async (wallpaperId: string) => {
+    return await request(`/wallpapers/${wallpaperId}`, {
+      method: 'DELETE',
+      headers: {},
+    });
+  },
 };

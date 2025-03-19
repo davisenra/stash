@@ -9,9 +9,9 @@ export interface Toast {
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
-const generateId = (): string => {
+function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
-};
+}
 
 const toasts = ref<Toast[]>([]);
 

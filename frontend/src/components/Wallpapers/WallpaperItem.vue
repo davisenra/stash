@@ -7,10 +7,15 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'select', wallpaper: Wallpaper): void;
+  (e: 'remove', wallpaper: Wallpaper): void;
 }>();
 
 function handleClick() {
   emit('select', props.wallpaper);
+}
+
+function handleRemove() {
+  emit('remove', props.wallpaper);
 }
 </script>
 
@@ -25,9 +30,16 @@ function handleClick() {
     <div
       class="absolute inset-0 flex items-end bg-black p-4 opacity-0 transition-all duration-300 ease-in-out hover:opacity-70"
     >
-      <div class="w-full text-white">
-        <h3 class="m-0 mb-2 truncate text-base">{{ wallpaper.name }}</h3>
-        <p class="m-0 text-sm opacity-80">{{ wallpaper.width }} × {{ wallpaper.height }}</p>
+      <div class="flex w-full justify-between text-white">
+        <div>
+          <h3 class="m-0 mb-2 w-30 truncate text-base">{{ wallpaper.name }}</h3>
+          <p class="m-0 text-sm opacity-80">{{ wallpaper.width }} × {{ wallpaper.height }}</p>
+        </div>
+        <div>
+          <button @click.stop="handleRemove" class="cursor-pointer text-red-400 underline">
+            Remove
+          </button>
+        </div>
       </div>
     </div>
   </div>

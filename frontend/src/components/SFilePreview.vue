@@ -10,9 +10,9 @@ const emit = defineEmits<{
   (e: 'remove', index: number): void;
 }>();
 
-const removeFile = () => {
+function removeFile() {
   emit('remove', props.index);
-};
+}
 
 const imageUrl = URL.createObjectURL(props.file);
 

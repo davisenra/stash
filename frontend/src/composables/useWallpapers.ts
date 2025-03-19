@@ -8,8 +8,15 @@ export function useWallpapers() {
   async function fetchWallpapers() {
     wallpapers.value = await apiService.listWallpapers();
   }
+
+  async function removeWallpaper(wallpaperId: string) {
+    await apiService.removeWallpaper(wallpaperId);
+    await fetchWallpapers();
+  }
+
   return {
     wallpapers: wallpapers,
     fetchWallpapers,
+    removeWallpaper,
   };
 }
