@@ -6,8 +6,8 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: () => import('@/views/HomeView.vue'),
+      name: 'gallery',
+      component: () => import('@/views/GalleryView.vue'),
       meta: { requiresAuth: true },
     },
     {
@@ -29,7 +29,7 @@ router.beforeEach(async (to, _, next) => {
   if (to.meta.requiresAuth && !state.isAuthenticated) {
     return next({ name: 'login' });
   } else if (to.meta.guest && state.isAuthenticated) {
-    return next({ name: 'home' });
+    return next({ name: 'gallery' });
   } else {
     return next();
   }

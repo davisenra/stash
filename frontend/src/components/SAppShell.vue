@@ -11,7 +11,7 @@ const isMobileMenuOpen = ref(false);
 const emit = defineEmits(['logout']);
 
 const navigationItems = [
-  { name: 'Home', href: '/' },
+  { name: 'Gallery', href: '/' },
   {
     name: 'Logout',
     href: '',
